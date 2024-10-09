@@ -1,6 +1,6 @@
 # Blend DSL
 
-**Blend DSL** is a dynamic Domain-Specific Language (DSL) designed for transforming textual DSLs into graphical representations using React Flow. This repository is structured to support flexible JSON schemas, powerful transformation algorithms, and thorough documentation, making it easy for users to contribute and extend the system.
+**Blend DSL** is a dynamic Domain-Specific Language (DSL) designed for transforming textual DSLs into graphical representations using React Flow. This repository is structured to support flexible JSON schemas, powerful transformation algorithms, and thorough documentation, making it easy for users to contribute and extend the system. (This repository is incomplete as the real logic and interface is not integrated yet)
 
 ## Features
 
@@ -25,7 +25,7 @@
 
 1. **Define Your DSL in JSON**: Create or modify a DSL in JSON format. Refer to the schema files in the `schemas/` directory for guidance.
 
-2. **Run the Transformer**:
+2. **Run the Transformer (Not yet Integrated)**:
 
    Use the transformation script to convert your DSL to a graphical model:
 
@@ -33,24 +33,10 @@
    node src/index.js
    ```
 
-3. **View the Graphical Model**: Open the React Flow interface to visualize your DSL's graphical representation.
-
-### Example
-
-An example DSL file is provided in the `examples/` directory. You can test it by running the transformer script.
-
-```dsl
-Goal<Rectangle> Build Bridge
-type: infrastructure
-broker: mainBroker
-condition: sensor
-actions: {command1, command2}
-```
+3. **View the Graphical Model (Not yet Integrated)**: Open the React Flow interface to visualize your DSL's graphical representation. Not yet Avialable but you can test how it will be on the Locsys website after the Integration of my solution is in the live production website or on the [BlendXSync](https://github.com/ChrysKoum/BlendXSync) project.
 
 ## Documentation
 
-- **[Setup Guide](docs/setup.md)**: Instructions for setting up the project locally.
-- **[Usage Guide](docs/usage.md)**: Detailed usage instructions for Blend DSL.
 - **[Metamodel Design](docs/metamodel_design.md)**: Information about the internal DSL metamodel.
 
 ## Contributing
