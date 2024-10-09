@@ -10,37 +10,6 @@
 - **Backward Compatibility**: Ensures compatibility with older models while evolving.
 - **Graphical Representation**: Visualize your DSL models using React Flow.
 
-## Repository Structure
-
-```
-blend-dsl/
-├── README.md                  # Project overview and usage instructions
-├── LICENSE                    # License information (MIT)
-├── CONTRIBUTING.md             # Guidelines for contributing
-├── .gitignore                  # Files and directories to ignore in version control
-├── schemas/                    # JSON schemas for DSL definitions
-│   ├── json_schema.json        # Primary DSL JSON schema
-│   └── new_json_schema.json    # Updated DSL JSON schema
-├── src/                        # Source code for transformations
-│   ├── transformers/           # Transformers to convert DSLs to graphical models
-│   │   ├── transformer_dsl_obj.js
-│   │   └── transformNewToOldJson.js
-│   └── index.js                # Entry point for transformation logic
-├── examples/                   # Example DSL files demonstrating usage
-│   ├── example1.dsl
-│   └── example2.dsl
-├── docs/                       # Project documentation
-│   ├── setup.md                # Setup instructions
-│   ├── usage.md                # Usage guide
-│   └── metamodel_design.md     # Details on the DSL metamodel design
-├── tests/                      # Unit and integration tests
-│   ├── transformer.test.js
-│   └── example.test.js
-└── images/                     # Diagrams and visuals for documentation
-    ├── meta_model_blenddsl.png
-    └── new_meta_model_blenddsl.png
-```
-
 ## Getting Started
 
 ### Installation
