@@ -1,0 +1,319 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "DSL Metamodel Schema",
+    "type": "object",
+    "properties": {
+      "nodeTypes": {
+        "type": "object",
+        "patternProperties": {
+          "^[a-zA-Z0-9_]+$": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "subtitle": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string",
+                "enum": [
+                  "HdrAutoIcon",
+                  "SensorsIcon",
+                  "LeakAddIcon",
+                  "PlayForWorkIcon",
+                  "SwapHorizIcon",
+                  "GroupWorkIcon",
+                  "FlagIcon",
+                  "AllOutIcon",
+                  "SmartToyIcon",
+                  "AirlineStopsIcon",
+                  "WorkspacesIcon",
+                  "EmojiEventsIcon",
+                  "CodeIcon",
+                  "ControlCameraIcon",
+                  "RestartAltIcon",
+                  "default"
+                ]
+              },
+              "draggable": {
+                "type": "boolean"
+              },
+              "maxInstances": {
+                "type": "integer",
+                "minimum": -1
+              },
+              "endKeyword": {
+                "type": ["string", "array"]
+              },
+              "startPattern": {
+                "type": ["string", "array"]
+              },
+              "startPatternExceptions": {
+                "type": ["object", "array"]
+              },
+              "handles": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["source", "target"]
+                    },
+                    "style": {
+                      "type": "object",
+                      "properties": {
+                        "top": { "type": "integer" },
+                        "background": { "type": "string", "pattern": "^#([A-Fa-f0-9]{6})$" }
+                      },
+                      "additionalProperties": false
+                    },
+                    "parameterDependency": {
+                      "type": "string"
+                    },
+                    "handleTarget": {
+                      "oneOf": [
+                        { "type": "string" },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "nodeType": { "type": "string" },
+                            "parameter": { "type": "string" }
+                          },
+                          "required": ["nodeType", "parameter"],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+                      ]
+                    },
+                    "connectionLimit": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^[a-zA-Z0-9_]+$": {
+                          "type": "string",
+                          "pattern": "^-1$|^0$|^[1-9][0-9]*$"  
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["type"],
+                  "additionalProperties": false
+                }
+              },
+              "colorConfig": {
+                "type": "object",
+                "patternProperties": {
+                  "^[a-zA-Z0-9_.]+$": {
+                    "type": "object",
+                    "properties": {
+                      "startColor": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6})$"
+                      },
+                      "endColor": {
+                        "type": "string",
+                        "pattern": "^#([A-Fa-f0-9]{6})$"
+                      }
+                    },
+                    "required": ["startColor", "endColor"],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "prefix": { "type": "string" },
+                    "type": { "type": "string" },
+                    "inputType": {
+                      "type": "string",
+                      "enum": [
+                        "wideInput",
+                        "slider",
+                        "switch",
+                        "autocomplete",
+                        "dynamicInputs",
+                        "input",
+                        "dropdown"
+                      ]
+                    },
+                    "placeholder": { "type": "string" },
+                    "default": {},
+                    "multiLine": { "type": "boolean" },
+                    "options": {
+                      "oneOf": [
+                        { "type": "array", "items": { "type": "string" } },
+                        { "type": "string" }
+                      ]
+                    },
+                    "dependency": {
+                      "oneOf": [
+                        { "type": "string" },
+                        { "type": "array", "items": { "type": "string" } }
+                      ]
+                    },
+                    "complexDependency": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "visibleCondition": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "patternProperties": {
+                            "^[a-zA-Z0-9_]+$": {
+                              "oneOf": [
+                                { "type": "string" },
+                                {
+                                  "type": "array",
+                                  "items": { "type": "string" }
+                                }
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "patternProperties": {
+                              "^[a-zA-Z0-9_]+$": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                          }
+                        }
+                      ]
+                    },
+                    "helperType": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "startDelimiter": { "type": "string" },
+                    "optionsDelimiter": { "type": "string" },
+                    "endDelimiter": { "type": "string" },
+                    "marks": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          { "type": "number" },
+                          { "type": "string" }
+                        ]
+                      }
+                    },
+                    "track": { "type": "string" },
+                    "min": { "type": "number" },
+                    "max": { "type": "number" },
+                    "unQuoted": { "type": "boolean" },
+                    "inputProps": {
+                      "oneOf": [
+                        { "type": "object" },
+                        {
+                          "type": "array",
+                          "items": { "type": "object" }
+                        }
+                      ]
+                    },
+                    "parameterException": { "type": "string" }
+                  },
+                  "required": ["name", "prefix"],
+                  "additionalProperties": false
+                }
+              },
+              "nestedParameters": {
+                "type": "object",
+                "patternProperties": {
+                  "^[a-zA-Z0-9_]+$": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": { "type": "string" },
+                        "name": { "type": "string" },
+                        "prefix": { "type": "string" },
+                        "parameterStart": { "type": ["string", "null"] },
+                        "delimiter": { "type": "string" },
+                        "endDelimiter": { "type": "string" },
+                        "type": { "type": "string" },
+                        "parameters": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "inputType": { "type": "string" },
+                        "inputTypes": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "connectedLabels": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "options": {
+                          "oneOf": [
+                            { "type": "array", "items": { "type": "string" } },
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              }
+                            }
+                          ]
+                        },
+                        "types": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "inputProps": { "type": "object" },
+                        "unQuoted": { "type": "boolean" },
+                        "multiLine": { "type": "boolean" }
+                      },
+                      "required": ["name", "prefix", "inputType"],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              },
+              "dependencies": {
+                "type": "object",
+                "patternProperties": {
+                  "^[a-zA-Z0-9_]+$": {
+                    "type": "object",
+                    "properties": {
+                      "parameter": { "type": "string" },
+                      "format": { "type": "string" },
+                      "initFormat": { "type": "string" }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "nestedNodeTypes": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["title", "icon", "draggable"],
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": ["nodeTypes"],
+    "additionalProperties": false
+  }
+  
+  

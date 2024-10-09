@@ -1,0 +1,456 @@
+{
+	"nodeTypes": {
+		"broker": {
+			"title": "Broker",
+			"subtitle": "Handles messaging",
+			"icon": "LeakAddIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "target"
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": "Broker<${communication_protocol}> ${title}",
+			"parameters": [
+				{
+					"name": "communication_protocol",
+					"inputType": "autocomplete",
+					"options": [
+						"MQTT",
+						"AMQP",
+						"Redis"
+					],
+					"default": "MQTT"
+				},
+				{
+					"name": "title",
+					"default": "broker"
+				},
+				{
+					"name": "host",
+					"prefix": "host:",
+					"default": "localhost"
+				},
+				{
+					"name": "port",
+					"prefix": "port:",
+					"type": "number",
+					"default": 1883
+				},
+				{
+					"name": "ssl",
+					"prefix": "ssl:",
+					"type": "boolean",
+					"inputType": "autocomplete",
+					"unQuoted":true, 
+					"options": [
+						"true",
+						"false"
+					],
+					"default": "true"
+				},
+				{
+					"name": "vhost",
+					"prefix": "vhost:",
+					"default": "default_vhost",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "topicExchange",
+					"prefix": "topicExchange:",
+					"default": "default_topic_exchange",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "rpcExchange",
+					"prefix": "rpcExchange:",
+					"default": "default_rpc_exchange",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "db",
+					"prefix": "db:",
+					"type": "number",
+					"unQuoted": true,
+					"default": 0,
+					"visibleCondition": {"communication_protocol":"Redis"}
+				}
+			],
+			"nestedParameters": {
+				"auth": [
+					{
+						"name": "username",
+						"prefix": "username:"
+					},
+					{
+						"name": "password",
+						"prefix": "password:"
+					}
+				]
+			}
+		},
+		"sensor": {
+			"title": "Sensor",
+			"subtitle": "Collects data",
+			"icon": "SensorsIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "source",
+					"parameterDependency": "broker",
+					"handleTarget": "broker",
+					"connectionLimit": {"broker": "1", "sensor": "-1"}
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": "Entity ${title}",
+			"parameterException": "entityType",
+			"parameters": [
+				{
+					"name": "title",
+					"default": "sensor"
+				},
+				{
+					"name": "entityType",
+					"prefix": "type:",
+					"default": "sensor",
+					"inputType": "autocomplete",
+					"options": ["actuator","sensor"],
+					"unQuoted": true
+				},
+				{
+					"name": "topic",
+					"prefix": "topic:",
+					"default": "A_NAME",
+					"dependency": "metadata"
+				},
+				{
+					"name": "broker",
+					"prefix": "broker:",
+					"inputType": "autocomplete",
+					"default": "",
+					"unQuoted": true,
+					"dependency": "broker"
+				},
+				{
+					"name": "freq",
+					"prefix": "freq:",
+					"type": "number",
+					"inputType": "slider",
+					"default": 3,
+					"marks": [1,"...",10]
+				}
+			],
+			"nestedParameters": {
+				"attributes": [
+					{
+						"name": "attributes",
+						"prefix": "- ",
+						"delimiter": ":",
+						"inputType": "dynamicInputs",
+						"parameters": [
+							"name",
+							"type"
+						]
+					}
+				]
+			},
+			"dependencies": {
+				"broker": {
+					"parameter": "title"
+				},
+				"metadata": {
+					"initFormat": "${name}.sensor.${this.title}"
+				}
+			}
+		},
+		"actuator": {
+			"title": "Actuator",
+			"subtitle": "Performs actions",
+			"icon": "PlayForWorkIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "source",
+					"parameterDependency": "broker",
+					"handleTarget": "broker",
+					"connectionLimit": {"broker": "1", "actuator": "-1"}
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": "Entity ${title}",
+			"parameterException": "entityType",
+			"parameters": [
+				{
+					"name": "title",
+					 "default": "actuator"
+				},
+				{
+					"name": "entityType",
+					"prefix": "type:",
+					"default": "actuator",
+					"inputType": "autocomplete",
+					"options": ["actuator","sensor"],
+					"unQuoted": true
+				},
+				{
+					"name": "topic",
+					"prefix": "topic:",
+					"default": "A_NAME",
+					"dependency": "metadata"
+				},
+				{
+					"name": "broker",
+					"prefix": "broker:",
+					"inputType": "autocomplete",
+					"default": "",
+					"unQuoted": true,
+					"dependency": "broker"
+				}
+			],
+			"nestedParameters": {
+				"attributes": [
+					{
+						"name": "attributes",
+						"prefix": "- ",
+						"delimiter": ":",
+						"parameters": [
+							"name",
+							"type"
+						],
+						"options": [
+							"float",
+							"number",
+							"string",
+							"bool",
+							"dist",
+							"list"
+						],
+						"types": [
+							"input",
+							"dropdown"
+						],
+						"inputType": "dynamicInputs"
+					}
+				]
+			},
+			"dependencies": {
+				"broker": {
+					"parameter": "title"
+				},
+				"metadata": {
+					"initFormat": "${name}.actuators.${this.title}"
+				}
+			}
+		},
+		"automation": {
+			"title": "Automation",
+			"subtitle": "Automates tasks",
+			"icon": "HdrAutoIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "source",
+					"style": { "top": 20, "background": "#00FF00" },
+					"parameterDependency": "starts",
+					"handleTarget": "automation",
+					"connectionLimit": {"automation": "-1", "starts": "-1"}
+				},
+				{
+					"type": "source",
+					"style": { "top": 40, "background": "#00FF00" },
+					"parameterDependency": "stops",
+					"handleTarget": "automation",
+					"connectionLimit": {"automation": "-1", "stops": "-1"}
+				},
+				{
+					"type": "source",
+					"style": { "top": 60, "background": "#00FF00" },
+					"parameterDependency": "after",
+					"handleTarget": "automation",
+					"connectionLimit": {"automation": "-1", "stops": "-1"}
+				},
+				{ "type": "target" }
+			],
+			"colorConfig": {
+				"starts": { "startColor": "#6bbf59", "endColor": "#b0f7a6" },
+				"stops": { "startColor": "#d15959", "endColor": "#f7a6a6" },
+				"after": { "startColor": "#ff9900", "endColor": "#ffcc66" }
+			},
+			"endKeyword": "end",
+			"startPattern": "Automation ${title}",
+			"parameters": [
+				{
+					"name": "title",
+					"default": "automation"
+				},
+				{
+					"name": "condition",
+					"prefix": "condition:",
+					"helperType": ["sensor"],
+					"default": "",
+					"unQuoted": true,
+					"multiLine": true
+				},
+				{
+					"name": "enabled",
+					"prefix": "enabled:",
+					"type": "boolean",
+					"inputType": "switch",
+					"default": true
+				},
+				{
+					"name": "delay",
+					"prefix": "delay:",
+					"type": "number",
+					"inputProps": {"step": "0.1"},
+					"default": 0.0
+				},
+				{
+					"name": "continuous",
+					"prefix": "continuous:",
+					"type": "boolean",
+					"inputType": "switch",
+					"default": false
+				},
+				{
+					"name": "checkOnce",
+					"prefix": "checkOnce:",
+					"type": "boolean",
+					"inputType": "switch",
+					"default": false
+				}
+				
+			],
+			"nestedParameters": {
+				"actions": [
+					{
+						"name": "actions",
+						"prefix": "- ",
+						"delimiter": ":",
+						"inputType": "dynamicInputs",
+						"parameters": ["name", "value"],
+						"inputTypes": ["dropdown", "dynamicInput"],
+						"options": ["actuator", "getInputByType"],
+						"connectedLabels": ["name", "value"]
+					}
+				],
+				"starts": [
+					{
+						"label": "Starts",
+						"name": "starts",
+						"prefix": "- ",
+						"inputType": "autocomplete",
+						"dependency": "automation",
+						"multiple": true
+					}
+				],
+				"stops": [
+					{
+						"label": "Stops",
+						"name": "stops",
+						"prefix": "- ",
+						"inputType": "autocomplete",
+						"dependency": "automation",
+						"multiple": true
+					}
+				],
+				"after": [
+					{
+						"label": "After",
+						"name": "after",
+						"prefix": "- ",
+						"inputType": "autocomplete",
+						"dependency": "automation",
+						"multiple": true
+					}
+				]
+			},
+			"dependencies": {
+				"automation": {
+					"parameter": "title"
+				},
+				"actuator": {
+					"format":"${title}.${attributes.name}"
+				},
+				"sensor": {
+					"format":"${title}.${attributes.name}"
+				}
+			}
+		},
+		"metadata": {
+			"title": "Metadata",
+			"subtitle": "Model information",
+			"icon": "metadataIcon",
+			"draggable": false,
+			"endKeyword": "end",
+			"startPattern": "Metadata",
+			"parameters": [
+				{
+					"name": "name",
+					"prefix": "name:",
+					"unQuoted": true,
+					"default": "name"
+				},
+				{
+					"name": "version",
+					"prefix": "version:",
+					"default": "1.0.0"
+				},
+				{
+					"name": "description",
+					"prefix": "description:",
+					"default": "description_here"
+				},
+				{
+					"name": "author",
+					"prefix": "author:",
+					"default": "author_name_here"
+				},
+				{
+					"name": "email",
+					"prefix": "email:",
+					"default": "email_here"
+				}				
+			]
+		},
+		"rtMonitor": {
+			"title": "RTMonitor",
+			"subtitle": "Runtime monitor",
+			"icon": "rtMonitorIcon",
+			"draggable": false,
+			"endKeyword": "end",
+			"startPattern": "RTMonitor",
+			"parameters": [
+				{
+					"name": "broker",
+					"prefix": "broker:",
+					"inputType": "autocomplete",
+					"unQuoted": true,
+					"default": ""
+				},
+				{
+					"name": "namespace",
+					"prefix": "namespace:",
+					"default": "0.1.0"
+				},
+				{
+					"name": "eventTopic",
+					"prefix": "eventTopic:",
+					"default": "event"
+				},
+				{
+					"name": "logsTopic",
+					"prefix": "logsTopic:",
+					"default": "logs"
+				}				
+			],
+			"dependencies": {
+				"broker": {
+					"parameter": "title"
+				}
+			}
+		}
+	}
+}

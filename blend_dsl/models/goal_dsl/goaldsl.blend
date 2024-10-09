@@ -1,0 +1,179 @@
+{
+	"nodeTypes": {
+		"events": {
+			"title": "Events",
+			"subtitle": "Defines an events",
+			"icon": "EmojiEventsIcon",
+			"handles": [
+				{
+				"type": "target"
+				}
+			],
+			"draggable": true,
+			"endKeyword": "end",
+			"startPattern": "events",
+			"maxInstances": 1,
+			"parameters": [],
+			"nestedParameters": {
+				"events": [
+					{
+						"name": "events",
+						"parameterStart": null,
+						"prefix": "",
+						"delimiter": "",
+						"parameters": ["name", "code"],
+						"inputType": "dynamicInputs",
+						"unQuoted": true
+					}
+				]
+			}
+		},
+		"commands": {
+			"title": "Commands",
+			"subtitle": "Defines a commands",
+			"icon": "CodeIcon",
+			"draggable": true,
+			"handles": [
+				{
+				"type": "target"
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": "commands",
+			"maxInstances": 1,
+			"parameters": [],
+			"nestedParameters": {
+				"commands": [
+					{
+						"name": "commands",
+						"parameterStart": null,
+						"prefix": "",
+						"delimiter": "",
+						"parameters": ["name", "type"],
+						"inputType": "dynamicInputs",
+						"unQuoted": true
+					}
+				]
+			}
+		},
+		"resetevents": {
+			"title": "resetEvents",
+			"subtitle": "Defines a Reset Events",
+			"icon": "RestartAltIcon",
+			"draggable": true,
+			"maxInstances": 1,
+			"handles": [
+				{
+					"type": "source",
+					"parameterDependency": "resetEvents",
+					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
+					"connectionLimit": {"events": "-1", "resetevents": "-1"}
+				}
+			],
+			"colorConfig": {
+				"resetEvents": { "startColor": "#E0BE19", "endColor": "#615A3B" }
+			},
+			"endKeyword": "end",
+			"startPattern": "resetEvents",
+			"parameters": [],
+			"nestedParameters": {
+				"resetEvents": [
+					{
+						"label": "Reset Events",
+						"name": "resetEvents",
+						"parameterStart": null,
+						"prefix": "",
+						"inputType": "autocomplete",
+						"options": "events",
+						"multiple": true
+					}
+				]
+			},
+			"dependencies": {
+				"events": {
+					"format": "${events.name}"
+				}
+			}
+		},
+		"state": {
+			"title": "State",
+			"subtitle": "Defines a state",
+			"icon": "ControlCameraIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "source",
+					"style": { "top": 20, "background": "#00FF00" },
+					"parameterDependency": "transitions.event",
+					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
+					"connectionLimit": {"state": "-1", "events": "-1"}
+				},
+				{
+					"type": "source",
+					"style": { "top": 40, "background": "#00FF00" },
+					"parameterDependency": "actions",
+					"handleTarget": {"nodeType": "commands", "parameter": "commands.name"},
+					"connectionLimit": {"state": "-1", "commands": "-1"}
+				},
+				{
+					"type": "source",
+					"style": { "top": 60, "background": "#00FF00" },
+					"parameterDependency": "transitions.state",
+					"handleTarget": "state",
+					"connectionLimit": {"state": "-1"}
+				},
+				{ "type": "target" }
+			],
+			"colorConfig": {
+				"transitions.event": { "startColor": "#E0BE19", "endColor": "#FFD91C" },
+				"actions": { "startColor": "#E06C27", "endColor": "#FF6830" },
+				"transitions.state": { "startColor": "#19E0D9", "endColor": "#1CFFF7" }
+			},
+			"endKeyword": "end",
+			"startPattern": "state ${title}",
+			"parameters": [
+				{
+					"name": "title",
+					"default": "random"
+				},
+				{
+					"name": "actions",
+					"prefix": "actions",
+					"type": "array",
+					"inputType": "autocomplete",
+					"startDelimiter": "{",
+					"optionsDelimiter": " ",
+					"endDelimiter": "}",
+					"options": ["commands"],
+					"complexDependency": ["commands"],
+					"multiple": true
+				}
+			],
+			"nestedParameters": {
+				"transitions": [
+					{
+						"name": "transitions",
+						"prefix": "",
+						"parameterStart": null,
+						"delimiter": "=>",
+						"inputType": "dynamicInputs",
+						"parameters": ["event", "state"],
+						"options": ["events", "state"],
+						"inputTypes": ["dropdown", "dropdown"]
+					}
+				]
+			},
+			"dependencies": {
+				"events": {
+					"format": "${events.name}"
+				},
+				"commands": {
+					"format": "${commands.name}"
+				},
+				"state": {
+					"parameter":"title"
+				}
+			}
+		}
+	}
+}

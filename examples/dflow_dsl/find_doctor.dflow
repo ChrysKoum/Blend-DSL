@@ -1,0 +1,78 @@
+
+entities
+    Entity Doctor
+        "Kardiologos",
+        "Odontiatros",
+        "good doc"
+    end
+end
+
+synonyms
+    Synonym date_period
+        "mera",
+        "evdomada",
+        "mina",
+        "aurio",
+        "some day"
+    end
+end
+
+triggers
+    Intent find_doctor
+        "I want" TE:Doctor "please",
+        TE:Doctor "please!",
+        "I want to call" TE:Doctor,
+        "I want to call" TE:Doctor S:date_period,
+        "I want to call" TE:Doctor "test" S:date_period "test",
+        "I want to call" PE:PERSON "test",
+        "I want to call" TE:Doctor "test" S:date_period "test" PE:PERSON["Test","Test"]
+        "I want to call" PE:PERSON["Test","Test"] "test"
+    end
+
+    Event external_1
+        "bot/event/external_1"
+    end
+end
+
+eservices
+    EServiceHTTP weather_svc
+        verb: GET
+        host: 'r4a.issel.ee.auth.gr'
+        port: 8080
+        path: '/weather'
+    end
+    EServiceHTTP storage_svc
+        verb: POST
+        host: 'r4a.issel.ee.auth.gr'
+        port: 00
+        path: '/{username}'
+    end
+end
+
+dialogues
+    Dialogue DialA
+        on: find_doctor
+        responses:
+            Form AF1
+                slot1: str = HRI('Give parameter 1', [PE:PERSON])
+                slot2: str = HRI('Give parameter 2',
+                    [find_doctor:True, external_1:False])
+                slot3: str = HRI('Give parameter 3 you' AF1.slot1, [TE:Doctor])
+            end,
+            ActionGroup answers
+              Speak('Hello' AF1.slot1 'how are you')
+            end
+    end
+    Dialogue DialB
+        on: external_1
+        responses:
+            Form SF1
+                slot1: str = HRI('Give parameter 1')
+                slot2: str = storage_svc(query=[city={a:SF1.slot1, b:0}],path=[username='mario'],)
+            end,
+            ActionGroup answers2
+              Speak('The weather is ' SF1.slot1)
+              storage_svc(query=[city=SF1.slot1], path=[username='mario'],)
+            end
+    end
+end

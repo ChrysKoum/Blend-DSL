@@ -1,0 +1,38 @@
+{
+	"nodeTypes": {
+	  "begin": {
+		"interfaceConfig": {
+		  "title": "Begin",
+		  "subtitle": "Sequence of Commands",
+		  "icon": "SmartToyIcon",
+		  "draggable": true,
+		  "parameters": [
+			{
+			  "name": "commands",
+			  "inputType": "dynamicInputs",
+			  "placeholder": "Commands",
+			  "types": ["dropdown", "input"]
+			}
+		  ]
+		},
+		"grammar": {
+		  "startPattern": "begin",
+		  "endKeyword": "end",
+		  "parameters": [],
+		  "maxInstances": 1,
+		  "nestedParameters": [
+			{
+			  "name": "commands",
+			  "parameterStart": null,
+			  "prefix": "",
+			  "empty": true,
+			  "delimiter": " ",
+			  "parameters": ["command", "code"],
+			  "options": ["initial", "up", "down", "left", "right"]
+			}
+		  ]
+		}
+	  }
+	}
+  }
+  

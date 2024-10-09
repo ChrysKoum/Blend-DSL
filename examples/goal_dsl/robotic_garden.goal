@@ -1,0 +1,79 @@
+Broker<MQTT> MyMQTTBroker
+    host: 'localhost'
+    port: 1883
+    auth:
+        username: ''
+        password: ''
+end
+
+Entity WaterValve
+    type: actuator
+    topic: 'garden.water_valve'
+    source: MyMQTTBroker
+    attributes:
+        - state: bool
+end
+
+Entity OrganicsMixer
+    type: actuator
+    topic: 'garden.organic_mixer'
+    source: MyMQTTBroker
+    attributes:
+        - state: bool
+end
+
+Entity RobotArmPose
+    type: sensor
+    topic: 'robot.arm.pose'
+    source: MyMQTTBroker
+    attributes:
+        - pose: dict
+end
+
+// ------------------ GOAL Definitions -----------------
+Goal<EntityStateCondition> Goal_1
+    condition: WaterValve.state == 1
+end
+
+Goal<EntityStateChange> Goal_2
+    entity: OrganicsMixer
+    timeConstraints:
+        - FROM_GOAL_START(<60)
+end
+
+Goal<WaypointTrajectory> Goal_3
+    entity: RobotArmPose
+    points: [
+        Point3D(0, 0, 0), Point3D(0, 10, 0), Point3D(0, 20, 0),
+        Point3D(10, 20, 0), Point3D(10, 10, 0), Point3D(10, 0, 0),
+        Point3D(20, 0, 0), Point3D(20, 10, 0), Point3D(20, 20, 0)
+    ]
+    maxDeviation: 0.1
+    timeConstraints:
+        - FROM_GOAL_START(<1800)
+end
+
+Goal<EntityStateCondition> Goal_4
+    condition: WaterValve.state == 1
+    timeConstraints:
+        - FROM_GOAL_START(<60)
+end
+
+Goal<Position> Goal_5
+    entity: RobotArmPose
+    position: Point3D(0, 0, 0)
+    maxDeviation: 0.1
+    timeConstraints:
+        - FROM_GOAL_START(<60)
+end
+
+Scenario ScenarioB
+    goals:
+        - Goal_1 -> 0.2
+        - Goal_2 -> 0.2
+        - Goal_3 -> 0.2
+        - Goal_4 -> 0.2
+        - Goal_5 -> 0.2
+    broker: MyMQTTBroker
+    concurrent: false
+end
