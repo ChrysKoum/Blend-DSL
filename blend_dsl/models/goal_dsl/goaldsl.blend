@@ -1,179 +1,933 @@
 {
 	"nodeTypes": {
-		"events": {
-			"title": "Events",
-			"subtitle": "Defines an events",
-			"icon": "EmojiEventsIcon",
+		"broker": {
+			"title": "Broker",
+			"subtitle": "Handles messaging",
+			"icon": "LeakAddIcon",
+			"draggable": true,
 			"handles": [
 				{
-				"type": "target"
+					"type": "target"
 				}
 			],
-			"draggable": true,
 			"endKeyword": "end",
-			"startPattern": "events",
-			"maxInstances": 1,
-			"parameters": [],
+			"startPattern": "Broker<${communication_protocol}> ${title}",
+			"parameters": [
+				{
+					"name": "communication_protocol",
+					"prefix": "communication_protocol:",
+					"inputType": "autocomplete",
+					"options": [
+						"MQTT",
+						"AMQP",
+						"Redis"
+					],
+					"default": "MQTT"
+				},
+				{
+					"name": "title",
+					"default": "broker"
+				},
+				{
+					"name": "host",
+					"prefix": "host:",
+					"default": "localhost"
+				},
+				{
+					"name": "port",
+					"prefix": "port:",
+					"type": "number",
+					"default": 1883
+				},
+				{
+					"name": "ssl",
+					"prefix": "ssl:",
+					"type": "boolean",
+					"inputType": "autocomplete",
+					"options": [
+						"true",
+						"false"
+					],
+					"default": "true"
+				},
+				{
+					"name": "vhost",
+					"prefix": "vhost:",
+					"default": "default_vhost",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "topicExchange",
+					"prefix": "topicExchange:",
+					"default": "default_topic_exchange",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "rpcExchange",
+					"prefix": "rpcExchange:",
+					"default": "default_rpc_exchange",
+					"visibleCondition": {"communication_protocol":"AMQP"}
+				},
+				{
+					"name": "db",
+					"prefix": "db:",
+					"type": "number",
+					"unQuoted": true,
+					"default": 0,
+					"visibleCondition": {"communication_protocol":"Redis"}
+				}
+			],
 			"nestedParameters": {
-				"events": [
+				"auth": [
 					{
-						"name": "events",
-						"parameterStart": null,
-						"prefix": "",
-						"delimiter": "",
-						"parameters": ["name", "code"],
-						"inputType": "dynamicInputs",
-						"unQuoted": true
+						"name": "username",
+						"prefix": "username:"
+					},
+					{
+						"name": "password",
+						"prefix": "password:"
 					}
 				]
 			}
 		},
-		"commands": {
-			"title": "Commands",
-			"subtitle": "Defines a commands",
-			"icon": "CodeIcon",
-			"draggable": true,
-			"handles": [
-				{
-				"type": "target"
-				}
-			],
-			"endKeyword": "end",
-			"startPattern": "commands",
-			"maxInstances": 1,
-			"parameters": [],
-			"nestedParameters": {
-				"commands": [
-					{
-						"name": "commands",
-						"parameterStart": null,
-						"prefix": "",
-						"delimiter": "",
-						"parameters": ["name", "type"],
-						"inputType": "dynamicInputs",
-						"unQuoted": true
-					}
-				]
-			}
-		},
-		"resetevents": {
-			"title": "resetEvents",
-			"subtitle": "Defines a Reset Events",
-			"icon": "RestartAltIcon",
-			"draggable": true,
-			"maxInstances": 1,
-			"handles": [
-				{
-					"type": "source",
-					"parameterDependency": "resetEvents",
-					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
-					"connectionLimit": {"events": "-1", "resetevents": "-1"}
-				}
-			],
-			"colorConfig": {
-				"resetEvents": { "startColor": "#E0BE19", "endColor": "#615A3B" }
-			},
-			"endKeyword": "end",
-			"startPattern": "resetEvents",
-			"parameters": [],
-			"nestedParameters": {
-				"resetEvents": [
-					{
-						"label": "Reset Events",
-						"name": "resetEvents",
-						"parameterStart": null,
-						"prefix": "",
-						"inputType": "autocomplete",
-						"options": "events",
-						"multiple": true
-					}
-				]
-			},
-			"dependencies": {
-				"events": {
-					"format": "${events.name}"
-				}
-			}
-		},
-		"state": {
-			"title": "State",
-			"subtitle": "Defines a state",
-			"icon": "ControlCameraIcon",
+		"sensor": {
+			"title": "Sensor",
+			"subtitle": "Collects data",
+			"icon": "SensorsIcon",
 			"draggable": true,
 			"handles": [
 				{
 					"type": "source",
-					"style": { "top": 20, "background": "#00FF00" },
-					"parameterDependency": "transitions.event",
-					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
-					"connectionLimit": {"state": "-1", "events": "-1"}
-				},
-				{
-					"type": "source",
-					"style": { "top": 40, "background": "#00FF00" },
-					"parameterDependency": "actions",
-					"handleTarget": {"nodeType": "commands", "parameter": "commands.name"},
-					"connectionLimit": {"state": "-1", "commands": "-1"}
-				},
-				{
-					"type": "source",
-					"style": { "top": 60, "background": "#00FF00" },
-					"parameterDependency": "transitions.state",
-					"handleTarget": "state",
-					"connectionLimit": {"state": "-1"}
-				},
-				{ "type": "target" }
+					"parameterDependency": "broker",
+					"handleTarget": "broker",
+					"connectionLimit": {"broker": "1", "sensor": "-1"}
+				}
 			],
-			"colorConfig": {
-				"transitions.event": { "startColor": "#E0BE19", "endColor": "#FFD91C" },
-				"actions": { "startColor": "#E06C27", "endColor": "#FF6830" },
-				"transitions.state": { "startColor": "#19E0D9", "endColor": "#1CFFF7" }
-			},
 			"endKeyword": "end",
-			"startPattern": "state ${title}",
+			"startPattern": "Entity ${title}",
+			"parameterException": "entityType",
 			"parameters": [
 				{
 					"name": "title",
-					"default": "random"
+					"default": "sensor"
 				},
 				{
-					"name": "actions",
-					"prefix": "actions",
-					"type": "array",
+					"name": "entityType",
+					"prefix": "type:",
+					"default": "sensor",
 					"inputType": "autocomplete",
-					"startDelimiter": "{",
-					"optionsDelimiter": " ",
-					"endDelimiter": "}",
-					"options": ["commands"],
-					"complexDependency": ["commands"],
-					"multiple": true
+					"options": ["actuator","sensor"],
+					"unQuoted": true
+				},
+				{
+					"name": "topic",
+					"prefix": "topic:",
+					"default": "A_NAME",
+					"dependency": "metadata"
+				},
+				{
+					"name": "broker",
+					"prefix": "broker:",
+					"inputType": "autocomplete",
+					"default": "",
+					"unQuoted": true,
+					"dependency": "broker"
+				},
+				{
+					"name": "freq",
+					"prefix": "freq:",
+					"type": "number",
+					"inputType": "slider",
+					"default": 3,
+					"marks": [1,"...",10]
 				}
 			],
 			"nestedParameters": {
-				"transitions": [
+				"attributes": [
 					{
-						"name": "transitions",
-						"prefix": "",
-						"parameterStart": null,
-						"delimiter": "=>",
+						"name": "attributes",
+						"prefix": "- ",
+						"delimiter": ":",
 						"inputType": "dynamicInputs",
-						"parameters": ["event", "state"],
-						"options": ["events", "state"],
-						"inputTypes": ["dropdown", "dropdown"]
+						"parameters": [
+							"name",
+							"type"
+						],
+						"options": [
+							"float",
+							"number",
+							"string",
+							"bool",
+							"dist",
+							"list"
+						],
+						"types": [
+							"input",
+							"dropdown"
+						]
 					}
 				]
 			},
 			"dependencies": {
-				"events": {
-					"format": "${events.name}"
+				"broker": {
+					"parameter": "title"
 				},
-				"commands": {
-					"format": "${commands.name}"
-				},
-				"state": {
-					"parameter":"title"
+				"metadata": {
+					"initFormat": "${name}.sensor.${this.title}"
 				}
 			}
-		}
+		},
+		"actuator": {
+			"title": "Actuator",
+			"subtitle": "Performs actions",
+			"icon": "PlayForWorkIcon",
+			"draggable": true,
+			"handles": [
+				{
+					"type": "source",
+					"parameterDependency": "broker",
+					"handleTarget": "broker",
+					"connectionLimit": {"broker": "1", "actuator": "-1"}
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": "Entity ${title}",
+			"parameterException": "entityType",
+			"parameters": [
+				{
+					"name": "title",
+					 "default": "actuator"
+				},
+				{
+					"name": "entityType",
+					"prefix": "type:",
+					"default": "actuator",
+					"inputType": "autocomplete",
+					"options": ["actuator","sensor"],
+					"unQuoted": true
+				},
+				{
+					"name": "topic",
+					"prefix": "topic:",
+					"default": "A_NAME",
+					"dependency": "metadata"
+				},
+				{
+					"name": "broker",
+					"prefix": "broker:",
+					"inputType": "autocomplete",
+					"default": "",
+					"unQuoted": true,
+					"dependency": "broker"
+				}
+			],
+			"nestedParameters": {
+				"attributes": [
+					{
+						"name": "attributes",
+						"prefix": "- ",
+						"delimiter": ":",
+						"parameters": [
+							"name",
+							"type"
+						],
+						"options": [
+							"float",
+							"number",
+							"string",
+							"bool",
+							"dist",
+							"list"
+						],
+						"types": [
+							"input",
+							"dropdown"
+						],
+						"inputType": "dynamicInputs"
+					}
+				]
+			},
+			"dependencies": {
+				"broker": {
+					"parameter": "title"
+				},
+				"metadata": {
+					"initFormat": "${name}.actuators.${this.title}"
+				}
+			}
+		},
+	   "entitygoal":{
+		  "title":"EntityGoal",
+		  "subtitle":"Defines an entity goal",
+		  "icon":"SwapHorizIcon",
+		  "draggable":true,
+		  "handles":[
+			 {
+				"type":"target"
+			 }
+		  ],
+		  "endKeyword":"end",
+		  "startPattern":"Goal<Entity${goalType}> ${title}",
+		  "parameters":[
+			{
+				"name": "title",
+				"default": "entitygoal"
+			},
+			{
+				"name": "goalType",
+				"inputType": "autocomplete",
+				"options":[
+				   "StateChange",
+				   "StateCondition"
+				],
+				"default": "StateChange"
+			},
+			 {
+				"name":"condition",
+				"prefix":"condition:",
+				"multiLine":true,
+				"unQuoted":true,
+				"default":"",
+				"visibleCondition": {"goalType":"StateCondition"}
+			 },
+			 {
+				"name":"entity",
+				"prefix":"entity:",
+				"inputType":"autocomplete",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"StateChange"},
+				"default":"",
+				"dependency": ["sensor", "actuator"]
+			 }
+		  ],
+		  "nestedParameters":{
+			 "timeConstraints":[
+				{
+				   "label":"Time Constraints",
+				   "name":"timeConstraints",
+				   "unQuoted":true,
+				   "prefix":"- ",
+				   "delimiter":"(",
+				   "endDelimiter":")",
+				   "parameters":[
+					  "type",
+					  "expression"
+				   ],
+				   "inputType":"dynamicInputs",
+				   "types":[
+					  "dropdown",
+					  "input"
+				   ],
+				   "options":[
+					  "FROM_APP_START",
+					  "FROM_GOAL_START"
+				   ]
+				}
+			 ]
+		  },
+		  "dependencies":{
+			 "sensor":{
+				"parameter":"title"
+			 },
+			 "actuator":{
+				"parameter":"title"
+			 }
+		  }
+	   },
+	   "areagoal": {
+			"title": "AreaGoal",
+			"subtitle": "Defines an area goal",
+			"icon": "AllOutIcon",
+			"draggable": true,
+			"handles": [
+				{
+				"type": "target"
+				}
+			],
+			"endKeyword": "end",
+			"startPattern": ["Goal<${goalType}> ${title}", "Goal<${goalType}Area> ${title}"],
+			"startPatternExceptions": { "goalType": "StraightLine", "order": 1 },
+			"parameters": [
+				{
+				"name": "title",
+				"default": "areagoal"
+				},
+				{
+				"name": "goalType",
+				"inputType": "autocomplete",
+				"options": ["Rectangle", "Circular", "Polyline", "StraightLine", "Moving"],
+				"default": "Rectangle"
+				},
+				{
+				"name": "entity",
+				"prefix": "entity:",
+				"inputType": "autocomplete",
+				"unQuoted": true,
+				"dependency": ["sensor", "actuator"],
+				"default": ""
+				},
+				{
+				"name": "tag",
+				"prefix": "tag:",
+				"inputType": "autocomplete",
+				"options": ["ENTER", "EXIT", "AVOID", "STEP"],
+				"unQuoted": true,
+				"default": "ENTER"
+				},
+				{
+				"name": "bottomLeftEdge",
+				"prefix": "bottomLeftEdge:",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "Rectangle" },
+				"default": "Point2D(2.0, 6.0)"
+				},
+				{
+				"name": "lengthX",
+				"prefix": "lengthX:",
+				"type": "number",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "Rectangle" },
+				"default": 3
+				},
+				{
+				"name": "lengthY",
+				"prefix": "lengthY:",
+				"type": "number",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "Rectangle" },
+				"default": 5
+				},
+				{
+				"name": "points",
+				"prefix": "points:",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "Polyline" },
+				"default": "defaultPoints"
+				},
+				{
+				"name": "center",
+				"prefix": "center:",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "Circular" },
+				"default": "defaultCenter"
+				},
+				{
+				"name": "radius",
+				"prefix": "radius:",
+				"type": "number",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": ["Circular", "Moving"] },
+				"default": 1
+				},
+				{
+				"name": "startPoint",
+				"prefix": "startPoint:",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "StraightLine" },
+				"default": "defaultStartPoint"
+				},
+				{
+				"name": "endPoint",
+				"prefix": "endPoint:",
+				"unQuoted": true,
+				"visibleCondition": { "goalType": "StraightLine" },
+				"default": "defaultEndPoint"
+				}
+			],
+			"nestedParameters": {
+				"timeConstraints": [
+				{
+					"label": "Time Constraints",
+					"name": "timeConstraints",
+					"unQuoted": true,
+					"prefix": "- ",
+					"delimiter": "(",
+					"endDelimiter": ")",
+					"parameters": ["type", "expression"],
+					"inputType": "dynamicInputs",
+					"types": ["dropdown", "input"],
+					"options": ["FROM_APP_START", "FROM_GOAL_START"]
+				}
+				]
+			},
+			"dependencies": {
+				"sensor": {
+					"parameter": "title"
+				},
+				"actuator": {
+					"parameter": "title"
+				}
+			}
+		},
+	   "posegoal":{
+		  "title":"PoseGoal",
+		  "subtitle":"Defines a pose goal",
+		  "icon":"SmartToyIcon",
+		  "draggable":true,
+		  "handles":[
+			 {
+				"type":"target"
+			 }
+		  ],
+		  "endKeyword":"end",
+		  "startPattern":"Goal<${goalType}> ${title}",
+		  "startPatternExceptions": [
+				{
+					"goalType": "Position"
+				},
+				{
+					"goalType": "Orientation"
+				},
+				{
+					"goalType": "Pose"
+				}
+			],
+		  "parameters":[
+			{
+				"name": "title",
+				"default": "posegoal"
+			},
+			{
+				"name": "goalType",
+				"inputType": "autocomplete",
+				
+				"default": "Pose"
+			},
+			 {
+				"name":"entity",
+				"prefix":"entity:",
+				"inputType":"autocomplete",
+				"unQuoted":true,
+				"dependency": ["sensor", "actuator"],
+				"default":""
+			 },
+			 {
+				"name":"position",
+				"prefix":"position:",
+				"unQuoted":true,
+				"visibleCondition": { "goalType": [
+					"Position",
+					"Pose"
+				 ] },
+				"default":"Point3D(0,0,0)"
+			 },
+			 {
+				"name":"orientation",
+				"prefix":"orientation:",
+				"unQuoted":true,
+				"visibleCondition": { "goalType": [
+					"Orientation",
+					"Pose"
+				 ] },
+				"default":"Orientation2D(0)"
+			 },
+			 {
+				"name":"maxDeviation",
+				"prefix":"maxDeviation:",
+				"type":"number",
+				"unQuoted":true,
+				"visibleCondition": { "goalType": [
+					"Orientation",
+					"Position"
+				 ] },
+				"default":0.1
+			 },
+			 {
+				"name":"maxDeviationPos",
+				"prefix":"maxDeviationPos:",
+				"type":"number",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"Pose"},
+				"default":0.1
+			 },
+			 {
+				"name":"maxDeviationOri",
+				"prefix":"maxDeviationOri:",
+				"type":"number",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"Pose"},
+				"default":0.1
+			 }
+		  ],
+		  "nestedParameters":{
+			 "timeConstraints":[
+				{
+				   "label":"Time Constraints",
+				   "name":"timeConstraints",
+				   "unQuoted":true,
+				   "prefix":"- ",
+				   "delimiter":"(",
+				   "endDelimiter":")",
+				   "parameters":[
+					  "type",
+					  "expression"
+				   ],
+				   "inputType":"dynamicInputs",
+				   "types":[
+					  "dropdown",
+					  "input"
+				   ],
+				   "options":[
+					  "FROM_APP_START",
+					  "FROM_GOAL_START"
+				   ]
+				}
+			 ]
+		  },
+		  "dependencies":{
+			 "sensor":{
+				"parameter":"title"
+			 },
+			 "actuator":{
+				"parameter":"title"
+			 }
+		  }
+	   },
+	   "trajectorygoal":{
+		  "title":"TrajectoryGoal",
+		  "subtitle":"Defines a trajectory goal",
+		  "icon":"AirlineStopsIcon",
+		  "draggable":true,
+		  "handles":[
+			 {
+				"type":"target"
+			 }
+		  ],
+		  "endKeyword":"end",
+		  "startPattern":"Goal<${goalType}TrajectoryGoal> ${title}",
+		  "parameters":[	{
+			"name": "title",
+			"default": "trajectorygoal"
+		},
+		{
+			"name": "goalType",
+			"inputType": "autocomplete",
+			"options":[
+			   "StraightLine",
+			   "Waypoint"
+			],
+			"default": "StraightLine"
+		},
+			 {
+				"name":"entity",
+				"prefix":"entity:",
+				"inputType":"autocomplete",
+				"unQuoted":true,
+				"default":"",
+				"dependency": ["sensor", "actuator"]
+			 },
+			 {
+				"name":"points",
+				"prefix":"points:",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"Waypoint"},
+				"default":"defaultPoints"
+			 },
+			 {
+				"name":"startPoint",
+				"prefix":"startPoint:",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"StraightLine"},
+				"default":"Point(0,0,0)"
+			 },
+			 {
+				"name":"finishPoint",
+				"prefix":"finishPoint:",
+				"unQuoted":true,
+				"visibleCondition": {"goalType":"StraightLineTrajectory"},
+				"default":"Point(0,0,0)"
+			 },
+			 {
+				"name":"maxDeviation",
+				"prefix":"maxDeviation:",
+				"type":"number",
+				"unQuoted":true,
+				"default":0.1
+			 }
+		  ],
+		  "nestedParameters":{
+			 "timeConstraints":[
+				{
+				   "label":"Time Constraints",
+				   "name":"timeConstraints",
+				   "unQuoted":true,
+				   "prefix":"- ",
+				   "delimiter":"(",
+				   "endDelimiter":")",
+				   "parameters":[
+					  "type",
+					  "expression"
+				   ],
+				   "inputType":"dynamicInputs",
+				   "types":[
+					  "dropdown",
+					  "input"
+				   ],
+				   "options":[
+					  "FROM_APP_START",
+					  "FROM_GOAL_START"
+				   ]
+				}
+			 ]
+		  },
+		  "dependencies":{
+			 "sensor":{
+				"parameter":"title"
+			 },
+			 "actuator":{
+				"parameter":"title"
+			 }
+		  }
+	   },
+	   "complexgoal":{
+		  "title":"ComplexGoal",
+		  "subtitle":"Defines a complex goal",
+		  "icon":"WorkspacesIcon",
+		  "draggable":true,
+		  "handles":[
+			 {
+				"type":"source",
+				"parameterDependency": "goals",
+				"handleTarget": ["entitygoal", "trajectorygoal", "posegoal", "areagoal"],
+				"connectionLimit": {
+					"complexgoal":"-1",
+					"areagoal":"-1",
+					"posegoal":"-1",
+					"trajectorygoal":"-1",
+					"entitygoal":"-1"
+				}
+			 },
+			 {
+				"type":"target"
+			 }
+		  ],
+		  "endKeyword":"end",
+		  "startPattern":"Goal<Complex> ${title}",
+		  "parameters":[	
+			{
+				"name": "title",
+				"default": "complexgoal"
+			},
+			 {
+				"name":"strategy",
+				"prefix":"strategy:",
+				"inputType":"autocomplete",
+				"options":[
+				   "ALL_ACCOMPLISHED",
+				   "NONE_ACCOMPLISHED",
+				   "AT_LEAST_ONE_ACCOMPLISHED",
+				   "EXACTLY_X_ACCOMPLISHED",
+				   "ALL_ACCOMPLISHED_ORDERED",
+				   "EXACTLY_X_ACCOMPLISHED_ORDERED"
+				],
+				"unQuoted":true,
+				"default":"ALL_ACCOMPLISHED"
+			 },
+			 {
+				"name":"xAccomplished",
+				"prefix":"xAccomplished:",
+				"type":"number",
+				"visibleCondition": {"strategy":["EXACTLY_X_ACCOMPLISHED","EXACTLY_X_ACCOMPLISHED_ORDERED"]},
+				"default":0
+			 }
+		  ],
+		  "nestedParameters":{
+			 "goals":[
+				{
+				   "name":"goals",
+				   "prefix":"- ",
+				   "inputType":"autocomplete",
+				   "dependency": [
+					"entitygoal",
+					"trajectorygoal",
+					"posegoal",
+					"areagoal"
+				 ],
+				   "unQuoted":true,
+				   "multiple":true
+				}
+			 ],
+			 "timeConstraints":[
+				{
+				   "label":"Time Constraints",
+				   "name":"timeConstraints",
+				   "unQuoted":true,
+				   "prefix":"- ",
+				   "delimiter":"(",
+				   "endDelimiter":")",
+				   "parameters":[
+					  "type",
+					  "expression"
+				   ],
+				   "inputType":"dynamicInputs",
+				   "types":[
+					  "dropdown",
+					  "input"
+				   ],
+				   "options":[
+					  "FROM_APP_START",
+					  "FROM_GOAL_START"
+				   ]
+				}
+			 ]
+		  },
+		  "dependencies":{
+			 "entitygoal":{
+				"parameter":"title"
+			 },
+			 "trajectorygoal":{
+				"parameter":"title"
+			 },
+			 "posegoal":{
+				"parameter":"title"
+			 },
+			 "areagoal":{
+				"parameter":"title"
+			 }
+		  }
+	   },
+	   "scenario":{
+		  "title":"Scenario",
+		  "subtitle":"Defines a scenario",
+		  "icon":"GroupWorkIcon",
+		  "draggable":true,
+		  "handles":[
+			 {
+				"type":"source",
+				"style":{
+				   "top":25,
+				   "background":"#00FF00"
+				},
+				"parameterDependency":"broker",
+				"handleTarget": "broker",
+				"connectionLimit": {
+					"scenario":"-1",
+					"broker":"-1"
+				}
+			 },
+			 {
+				"type":"source",
+				"style":{
+				   "top":50,
+				   "background":"#00FF00"
+				},
+				"parameterDependency":"goals.goals",
+				"handleTarget": ["complexgoal","entitygoal", "trajectorygoal", "posegoal", "areagoal"],
+				"connectionLimit": {
+					"scenario":"-1",
+					"complexgoal":"-1",
+					"areagoal":"-1",
+					"posegoal":"-1",
+					"trajectorygoal":"-1",
+					"entitygoal":"-1"
+				}
+			 }
+		  ],
+		  "colorConfig":{
+			 "broker":{
+				"startColor":"#6bbf59",
+				"endColor":"#b0f7a6"
+			 },
+			 "goals":{
+				"startColor":"#d15959",
+				"endColor":"#f7a6a6"
+			 }
+		  },
+		  "endKeyword":"end",
+		  "startPattern":"Scenario ${title}",
+		  "parameters":[
+			{
+				"name": "title",
+				"default": "scenario"
+			},
+			 {
+				"name":"broker",
+				"prefix":"broker:",
+				"unQuoted":true,
+				"inputType":"autocomplete",
+				"dependency":[
+				   "broker"
+				],
+				"default":""
+			 },
+			 {
+				"name":"concurrent",
+				"prefix":"concurrent:",
+				"type":"boolean",
+				"inputType":"switch",
+				"default":false
+			 }
+		  ],
+		  "nestedParameters":{
+			 "goals":[
+				{
+				   "name":"goals",
+				   "prefix":"- ",
+				   "delimiter":"->",
+				   "parameters":[
+					  "goals",
+					  "weight"
+				   ],
+				   "inputType":"dynamicInputs",
+				   "options":[
+					  [
+						 "entitygoal",
+						 "trajectorygoal",
+						 "posegoal",
+						 "areagoal",
+						 "complexgoal"
+					  ]
+				   ],
+				   "inputTypes":[
+					  "dropdown",
+					  "input"
+				   ]
+				}
+			 ],
+			 "timeConstraints":[
+				{
+				   "label":"Time Constraints",
+				   "name":"timeConstraints",
+				   "unQuoted":true,
+				   "prefix":"- ",
+				   "delimiter":"(",
+				   "inputType":"dynamicInputs",
+				   "endDelimiter":")",
+				   "parameters":[
+					  "type",
+					  "expression"
+				   ],
+				   "types":[
+					  "dropdown",
+					  "input"
+				   ],
+				   "options":[
+					  "FROM_APP_START",
+					  "FROM_GOAL_START"
+				   ]
+				}
+			 ]
+		  },
+		  "dependencies":{
+			 "broker":{
+				"parameter":"title"
+			 },
+			 "complexgoal":{
+				"parameter":"title"
+			 },
+			 "entitygoal":{
+				"parameter":"title"
+			 },
+			 "trajectorygoal":{
+				"parameter":"title"
+			 },
+			 "posegoal":{
+				"parameter":"title"
+			 },
+			 "areagoal":{
+				"parameter":"title"
+			 }
+		  }
+	   }
 	}
-}
+ }

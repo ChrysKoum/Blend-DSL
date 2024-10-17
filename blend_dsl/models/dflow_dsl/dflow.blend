@@ -1,179 +1,491 @@
 {
-	"nodeTypes": {
-		"events": {
-			"title": "Events",
-			"subtitle": "Defines an events",
-			"icon": "EmojiEventsIcon",
-			"handles": [
-				{
-				"type": "target"
-				}
-			],
-			"draggable": true,
-			"endKeyword": "end",
-			"startPattern": "events",
-			"maxInstances": 1,
-			"parameters": [],
-			"nestedParameters": {
-				"events": [
+  "nodeTypes": {
+    "connectors": {
+      "title": "Connectors",
+      "subtitle": "Group of connectors",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "connectors",
+      "nestedNodeTypes": ["connector"]
+    },
+    "connector": {
+      "title": "Connector",
+      "subtitle": "Connector",
+      "icon": "PlugIcon",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Connector ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "slack",
+          "inputType": "autocomplete",
+          "options": ["slack", "telegram"]
+        }, 
+        {
+          "name": "token",
+          "prefix": "token:"
+        },
+        {
+          "name": "channel",
+          "prefix": "channel:",
+				  "visibleCondition": { "title": "slack" }
+        },
+        {
+          "name": "signing_secret",
+          "prefix": "signing_secret:",
+				  "visibleCondition": { "title": "slack" }
+        },
+        {
+          "name": "verify",
+          "prefix": "verify:",
+				  "visibleCondition": { "title": "telegram" }
+        },
+        {
+          "name": "webhook_url",
+          "prefix": "webhook_url:",
+				  "visibleCondition": { "title": "telegram" }
+        }
+      ]
+    },
+    "triggers": {
+      "title": "Triggers",
+      "subtitle": "Group of triggers",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "triggers",
+      "nestedNodeTypes": ["intent", "event"]
+    },
+    "intent": {
+      "title": "Intent",
+      "subtitle": "Intent",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Intent ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "intent_name"
+        }
+      ],
+      "nestedParameters": {
+				"phrases": [
 					{
-						"name": "events",
-						"parameterStart": null,
+						"name": "phrase",
 						"prefix": "",
-						"delimiter": "",
-						"parameters": ["name", "code"],
-						"inputType": "dynamicInputs",
-						"unQuoted": true
+						"parameterStart": null,
+            "endDelimiter": ",",
+            "inputType": "dynamicInputs",
+            "parameters": ["phrase"],
+            "escapeSpecialCharacters": true,
+						"unquoteOuter": true
 					}
 				]
 			}
-		},
-		"commands": {
-			"title": "Commands",
-			"subtitle": "Defines a commands",
-			"icon": "CodeIcon",
-			"draggable": true,
-			"handles": [
-				{
-				"type": "target"
-				}
-			],
-			"endKeyword": "end",
-			"startPattern": "commands",
-			"maxInstances": 1,
-			"parameters": [],
-			"nestedParameters": {
-				"commands": [
+    }, 
+    "event": {
+      "title": "Event",
+      "subtitle": "Event",
+      "draggable": true,
+      "endKeyword": "end",
+      "maxInstances": 1,
+      "startPattern": "Event ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "event_name"
+        },
+        {
+          "name": "uri",
+          "prefix": "",
+          "default": "bot/event/"
+        }
+      ]
+    },
+    "gslots": {
+      "title": "Global Slots",
+      "subtitle": "Group of global slots",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "gslots",
+      "parameters": [],
+      "nestedParameters": {
+				"gslots": [
 					{
-						"name": "commands",
-						"parameterStart": null,
+						"name": "gslots",
 						"prefix": "",
-						"delimiter": "",
-						"parameters": ["name", "type"],
-						"inputType": "dynamicInputs",
-						"unQuoted": true
+						"parameterStart": null,
+            "delimiter": ":",
+            "inputType": "dynamicInputs",
+            "parameters": ["name", "type"],
+            "escapeSpecialCharacters": true
 					}
 				]
 			}
-		},
-		"resetevents": {
-			"title": "resetEvents",
-			"subtitle": "Defines a Reset Events",
-			"icon": "RestartAltIcon",
-			"draggable": true,
-			"maxInstances": 1,
-			"handles": [
-				{
-					"type": "source",
-					"parameterDependency": "resetEvents",
-					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
-					"connectionLimit": {"events": "-1", "resetevents": "-1"}
-				}
-			],
-			"colorConfig": {
-				"resetEvents": { "startColor": "#E0BE19", "endColor": "#615A3B" }
-			},
-			"endKeyword": "end",
-			"startPattern": "resetEvents",
-			"parameters": [],
-			"nestedParameters": {
-				"resetEvents": [
-					{
-						"label": "Reset Events",
-						"name": "resetEvents",
-						"parameterStart": null,
-						"prefix": "",
-						"inputType": "autocomplete",
-						"options": "events",
-						"multiple": true
-					}
-				]
-			},
+    },
+    "entities": {
+      "title": "Entities",
+      "subtitle": "Group of entities",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "entities",
+      "nestedNodeTypes": ["entity"]
+    },
+    "entity": {
+      "title": "Entity",
+      "subtitle": "Entity",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Entity ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "entity_name"
+        }
+      ],
+      "nestedParameters": {
+        "values": [
+          {
+            "name": "values",
+            "prefix": "",
+            "parameterStart": null,
+            "inputType": "dynamicInputs",
+            "parameters": ["values"],
+            "escapeSpecialCharacters": true,
+            "unquoteOuter": true
+          }
+        ]
+      }
+    },
+    "synonyms": {
+      "title": "Synonyms",
+      "subtitle": "Group of synonyms",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "synonyms",
+      "nestedNodeTypes": ["synonym"]
+    },
+    "synonym": {
+      "title": "Synonym",
+      "subtitle": "Synonym",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Synonym ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "synonym_name"
+        }
+      ],
+      "nestedParameters": {
+        "words": [
+          {
+            "name": "words",
+            "prefix": "",
+            "parameterStart": null,
+            "inputType": "dynamicInputs",
+            "parameters": ["words"],
+            "escapeSpecialCharacters": true,
+            "unquoteOuter": true
+          }
+        ]
+      }
+    },
+    "eservices": {
+      "title": "EServices",
+      "subtitle": "Group of EServices",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "eservices",
+      "nestedNodeTypes": ["eserviceHTTP"]
+    },
+    "eserviceHTTP": {
+      "title": "EServiceHTTP",
+      "subtitle": "EService HTTP",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "EServiceHTTP ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "synonym_name"
+        },
+        {
+          "name": "verb",
+          "prefix": "verb:",
+          "inputType": "autocomplete",
+          "options": ["GET", "POST", "PUT"],
+					"unQuoted":true, 
+					"default": "GET"
+        },
+        {
+          "name": "host",
+          "prefix": "host:"
+        },
+        {
+          "name": "port",
+          "prefix": "port:",
+          "type": "number",
+					"default": "00"
+        },
+        {
+          "name": "path",
+          "prefix": "path:"
+        }
+      ]
+    },
+    "access_controls": {
+      "title": "Access Controls",
+      "subtitle": "Group of access controls",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "access_controls",
+      "nestedNodeTypes": ["roles", "path", "policy", "users", "authentication"]
+    },
+    "roles": {
+      "title": "Roles",
+      "subtitle": "Roles",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Roles",
+      "parameters": [],
+      "nestedParameters": {
+        "words": [
+          {
+            "name": "words",
+            "prefix": "",
+            "parameterStart": null,
+						"endDelimiter": ",",
+            "inputType": "dynamicInputs",
+            "parameters": ["words"]
+          }
+        ],
+        "default": [
+          {
+            "name": "default",
+            "prefix": ""
+          }
+        ]
+      }
+    },
+    "path": {
+      "title": "Path",
+      "subtitle": "Path",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Path",
+      "parameters": [
+        {
+          "name": "path",
+          "prefix": "",
+          "default": "/home/Desktop/"
+        }
+      ]
+    },
+    "policy": {
+      "title": "Policy",
+      "subtitle": "Policy",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Policy ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "policy_name"
+        }
+      ],
+      "nestedParameters": {
+        "on": [
+          {
+            "label": "Actions",
+            "name": "on",
+            "prefix": "",
+						"endDelimiter": ",",
+            "inputType": "dynamicInputs",
+            "parameters": ["on"],
+            "unquoteOuter": true
+          }
+        ],
+        "roles": [
+          {
+            "label": "Roles",
+            "name": "roles",
+            "prefix": "",
+						"endDelimiter": ",",
+            "inputType": "dynamicInputs",
+            "parameters": ["roles"],
+            "unquoteOuter": true
+          }
+        ]
+      }
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Users",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Users",
+      "parameters": [],
+      "nestedParameters": {
+        "role": [
+          {
+            "name": "role",
+            "prefix": "",
+            "parameterStart": null,
+            "delimiter": ":",
+            "inputType": "dynamicInputs",
+            "parameters": ["role", "users"],
+            "inputTypes": ["dropdown", "input"],
+            "options": ["roles"],
+            "multiline": true
+          }
+        ]
+      },
 			"dependencies": {
-				"events": {
-					"format": "${events.name}"
+				"roles": {
+					"format": "${words.words}"
 				}
 			}
-		},
-		"state": {
-			"title": "State",
-			"subtitle": "Defines a state",
-			"icon": "ControlCameraIcon",
-			"draggable": true,
-			"handles": [
-				{
-					"type": "source",
-					"style": { "top": 20, "background": "#00FF00" },
-					"parameterDependency": "transitions.event",
-					"handleTarget": {"nodeType": "events", "parameter": "events.name"},
-					"connectionLimit": {"state": "-1", "events": "-1"}
-				},
-				{
-					"type": "source",
-					"style": { "top": 40, "background": "#00FF00" },
-					"parameterDependency": "actions",
-					"handleTarget": {"nodeType": "commands", "parameter": "commands.name"},
-					"connectionLimit": {"state": "-1", "commands": "-1"}
-				},
-				{
-					"type": "source",
-					"style": { "top": 60, "background": "#00FF00" },
-					"parameterDependency": "transitions.state",
-					"handleTarget": "state",
-					"connectionLimit": {"state": "-1"}
-				},
-				{ "type": "target" }
-			],
-			"colorConfig": {
-				"transitions.event": { "startColor": "#E0BE19", "endColor": "#FFD91C" },
-				"actions": { "startColor": "#E06C27", "endColor": "#FF6830" },
-				"transitions.state": { "startColor": "#19E0D9", "endColor": "#1CFFF7" }
-			},
-			"endKeyword": "end",
-			"startPattern": "state ${title}",
-			"parameters": [
-				{
-					"name": "title",
-					"default": "random"
-				},
-				{
-					"name": "actions",
-					"prefix": "actions",
-					"type": "array",
-					"inputType": "autocomplete",
-					"startDelimiter": "{",
-					"optionsDelimiter": " ",
-					"endDelimiter": "}",
-					"options": ["commands"],
-					"complexDependency": ["commands"],
-					"multiple": true
-				}
-			],
-			"nestedParameters": {
-				"transitions": [
-					{
-						"name": "transitions",
-						"prefix": "",
-						"parameterStart": null,
-						"delimiter": "=>",
-						"inputType": "dynamicInputs",
-						"parameters": ["event", "state"],
-						"options": ["events", "state"],
-						"inputTypes": ["dropdown", "dropdown"]
-					}
-				]
-			},
-			"dependencies": {
-				"events": {
-					"format": "${events.name}"
-				},
-				"commands": {
-					"format": "${commands.name}"
-				},
-				"state": {
-					"parameter":"title"
-				}
-			}
-		}
-	}
+    },
+    "authentication": {
+      "title": "Authentication",
+      "subtitle": "Authentication",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Authentication",
+      "parameters": [
+        {
+          "name": "method",
+          "prefix": "method:",
+          "inputType": "autocomplete",
+          "options": ["slot", "user_id", "slack", "telegram"],
+          "default": "slack"
+        },
+        {
+          "name": "slot_name",
+          "prefix": "slot_name:"
+        }
+      ]
+    },
+    "dialogues": {
+      "title": "Dialogues",
+      "subtitle": "Group of dialogues",
+      "draggable": true,
+      "maxInstances": 1,
+      "endKeyword": "end",
+      "startPattern": "dialogues",
+      "nestedNodeTypes": ["dialogue"]
+    },
+    "dialogue": {
+      "title": "Dialogue",
+      "subtitle": "Dialogue",
+      "draggable": true,
+      "endKeyword": "end",
+      "startPattern": "Dialogue ${title}",
+      "nestedNodeTypes": ["form", "actionGroup"],
+      "parameters": [
+        {
+          "name": "title",
+          "default": "dialogue_name"
+        },
+        {
+          "name": "onTrigger",
+          "prefix": "on:",
+          "inputType": "autocomplete",
+          "dependency": ["intent", "event"],
+					"default": "",
+					"unQuoted": true
+        }
+      ],
+      "nestedParameters": {
+        "responses": [
+          {
+            "name": "responses",
+            "prefix": "responses:",
+            "nestedNodeTypes": ["form", "actionGroup"],
+            "inputType": "dynamicInputs",
+            "parameters": ["response"],
+            "options": [ ["actionGroup","form"]],
+            "inputTypes": ["dropdown"]
+          }
+        ]
+      },
+      "dependencies": {
+        "intent": {
+          "parameter": "title"
+        },
+        "event": {
+          "parameter": "title"
+        }, 
+        "form": {
+          "parameter": "title"
+        },
+        "actionGroup": {
+          "parameter": "title"
+        }
+      }
+    },
+    "actionGroup": {
+      "title": "Action Group",
+      "subtitle": "Group of actions",
+      "draggable": true,
+      "endKeyword": ["end","end,"],
+      "lastKeywordIndex": 0,
+      "startPattern": "ActionGroup ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "action_group_name"
+        }
+      ],
+      "nestedParameters": {
+        "actions": [
+          {
+            "name": "actions",
+            "prefix": "",
+            "parameterStart": null,
+            "delimiter": "(",
+            "inputType": "dynamicInputs",
+            "parameters": ["name","type"],
+            "options": ["eserviceHTTP", "Speak", "FireEvent", "SetFSlot", "SetGSlot"],
+            "multiline": true
+          }
+        ]
+      }
+    },
+    "form": {
+      "title": "Form",
+      "subtitle": "Form",
+      "draggable": true,
+      "endKeyword": ["end","end,"],
+      "lastKeywordIndex": 0,
+      "startPattern": "Form ${title}",
+      "parameters": [
+        {
+          "name": "title",
+          "default": "form_name"
+        }
+      ],
+      "nestedParameters": {
+        "params": [
+          {
+            "name": "params",
+            "prefix": "",
+            "parameterStart": null,
+            "delimiter": ":",
+            "inputType": "dynamicInputs",
+            "parameters": ["param_name", "param_type"],
+            "multiline": true
+          }
+        ]
+      }
+    }
+  }
 }
