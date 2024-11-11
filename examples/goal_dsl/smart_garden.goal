@@ -134,10 +134,10 @@ end
 
 Goal<Complex> CG2
     goals:
-        - Goal_5 -> 0.2
-        - Goal_6 -> 0.2
-        - Goal_7 -> 0.3
-        - Goal_8 -> 0.3
+        - Goal_5
+        - Goal_6
+        - Goal_7
+        - Goal_8
     strategy: ALL_ACCOMPLISHED_ORDERED
 end
 
